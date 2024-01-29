@@ -74,12 +74,12 @@ const App = () => {
       <button onClick={openModal}>Open Form</button>
 
       {isModalOpen && (
-        <div className="modal">
+        <div className="modal" id="root">
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <form>
               <label htmlFor="username">Username:</label>
               <input type="text" id="username" onChange={handleInputChange} />
-              
+
               <label htmlFor="email">Email:</label>
               <input type="text" id="email" onChange={handleInputChange} />
 
