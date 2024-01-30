@@ -1,124 +1,86 @@
-import React, { useState, useRef, useEffect } from 'react';
-import './App.css';
+import React, { useState, useRef } from "react";
+import "./App.css";
 
-const ModalApp = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [dob, setDob] = useState('');
-  const modalRef = useRef(null);
+const App = () => {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const usernameRef = useRef(null);
+  const emailRef = useRef(null);
+  const phoneRef = useRef(null);
+  const dobRef = useRef(null);
+  const formRef = useRef(null);
 
-  const openModal = () => {
-    setIsOpen(true);
+  const openForm = () => {
+    setIsFormOpen(true);
   };
 
-  const closeModal = () => {
-    setIsOpen(false);
+  const closeForm = () => {
+    setIsFormOpen(false);
+  };
+
+  const handleClickOutside = (e) => {
+    if (formRef.current && !formRef.current.contains(e.target)) {
+      closeForm();
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!email.includes('@')) {
-      alert('Invalid email. Please check your email address.');
-    } else if (phone.length !== 10 || !/^\d+$/.test(phone)) {
-      alert('Invalid phone number. Please enter a 10-digit phone number.');
-    } else if (new Date(dob) > new Date()) {
-      alert('Invalid date of birth. Please enter a valid date.');
-    } else {
-      alert('Form submitted successfully!');
-      setUsername('');
-      setEmail('');
-      setPhone('');
-      setDob('');
-      closeModal();
+    const username = usernameRef.current.value;
+    const email = emailRef.current.value;
+    const phone = phoneRef.current.value;
+    const dob = dobRef.current.value;
+
+    if (!email.includes("@")) {
+      alert("Invalid email");
+      return;
     }
-  };
 
-  const handleOutsideClick = (e) => {
-    if (modalRef.current && !modalRef.current.contains(e.target)) {
-      closeModal();
+    if (phone.length !== 10 || isNaN(phone)) {
+      alert("Invalid phone number");
+      return;
     }
-  };
 
-  useEffect(() => {
-    document.addEventListener('mousedown', handleOutsideClick);
+    const currentDate = new Date();
+    const inputDate = new Date(dob);
 
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, []);
+    if (inputDate > currentDate) {
+      alert("Invalid date of birth");
+      return;
+    }
 
-  const closeIconStyle = {
-    cursor: 'pointer',
-    position: 'absolute',
-    top: '10px',
-    right: '10px',
-    fontSize: '24px',
-    backgroundColor: '#4f4f4f',
-    color: '#fff',
-    borderRadius: '50%',
-    padding: '5px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-  };
-
-  const handleModalClick = (e) => {
-    e.stopPropagation();
-  };
-
-  const handleModalContentClick = (e) => {
-    e.stopPropagation();
+    closeForm();
   };
 
   return (
-    <div className="modal-app">
-      <button onClick={openModal}>Open Form</button>
+    <div className={`app ${isFormOpen ? "dimmed" : ""}`} onClick={handleClickOutside}>
+      <h1>User Details Modal</h1>
+      <button className="submit-button" onClick={openForm}>
+        Open Form
+      </button>
 
-      {isOpen && (
-        <div className="modal" ref={modalRef} onClick={closeModal}>
-          <div className="modal-content" onClick={handleModalClick}>
-            <span style={closeIconStyle} onClick={closeModal}>
-              &times;
-            </span>
-            <form onSubmit={handleSubmit} onClick={handleModalContentClick}>
+      {isFormOpen && (
+        <div className="modal" onClick={handleClickOutside}>
+          <div className="modal-content" ref={formRef}>
+            <form>
+              <h3>Fill Details</h3>
               <label htmlFor="username">Username:</label>
-              <input
-                type="text"
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
+              <input type="text" id="username" ref={usernameRef} required />
 
               <label htmlFor="email">Email:</label>
-              <input
-                type="text"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+              <input type="email" id="email" ref={emailRef} required />
 
               <label htmlFor="phone">Phone Number:</label>
-              <input
-                type="text"
-                id="phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-              />
+              <input type="tel" id="phone" ref={phoneRef} required />
 
               <label htmlFor="dob">Date of Birth:</label>
-              <input
-                type="date"
-                id="dob"
-                value={dob}
-                onChange={(e) => setDob(e.target.value)}
-                required
-              />
+              <input type="date" id="dob" ref={dobRef} required />
 
-              <button type="submit" className="submit-button">
+              <button
+                type="button"
+                className="submit-button"
+                onClick={handleSubmit}
+              >
                 Submit
               </button>
             </form>
@@ -129,4 +91,4 @@ const ModalApp = () => {
   );
 };
 
-export default ModalApp;
+export default App;
