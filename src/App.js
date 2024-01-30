@@ -1,119 +1,122 @@
-import React, { useState, useRef, useEffect } from "react";
-import "./App.css";
+import React, { useState, useRef, useEffect } from 'react';
+import './App.css';
 
-const ModalApp = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [dob, setDob] = useState("");
+const App = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [dob, setDob] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+  const [dobError, setDobError] = useState('');
   const modalRef = useRef(null);
 
-  useEffect(() => {
-    const handleOutsideClick = (e) => {
-      if (modalRef.current && !modalRef.current.contains(e.target)) {
-        closeModal();
-      }
-    };
-
-    document.addEventListener("mousedown", handleOutsideClick);
-
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
-
   const openModal = () => {
-    setIsOpen(true);
+    setModalOpen(true);
   };
 
   const closeModal = () => {
-    setIsOpen(false);
+    setModalOpen(false);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!email.includes("@")) {
-      alert("Invalid email. Please check your email address.");
-    } else if (phone.length !== 10 || !/^\d+$/.test(phone)) {
-      alert("Invalid phone number. Please enter a 10-digit phone number.");
-    } else if (new Date(dob) > new Date()) {
-      alert("Invalid date of birth. Please enter a valid date.");
-    } else {
-      alert("Form submitted successfully!");
-      setUsername("");
-      setEmail("");
-      setPhone("");
-      setDob("");
+  const handleOutsideClick = (e) => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
       closeModal();
     }
   };
 
-  const closeIconStyle = {
-    cursor: "pointer",
-    position: "absolute",
-    top: "10px",
-    right: "10px",
-    fontSize: "18px",
-  };
+  useEffect(() => {
+    document.addEventListener('mousedown', handleOutsideClick);
 
-  const handleModalClick = (e) => {
-    e.stopPropagation();
-  };
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
 
-  const handleModalContentClick = (e) => {
-    e.stopPropagation();
+  const handleSubmit = () => {
+    // Validate email
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setEmailError('Invalid email');
+      return;
+    }
+
+    // Validate phone number
+    if (!/^\d{10}$/.test(phone)) {
+      setPhoneError('Invalid phone number');
+      return;
+    }
+
+    // Validate date of birth
+    const currentDate = new Date();
+    const selectedDate = new Date(dob);
+    if (selectedDate >= currentDate) {
+      setDobError('Invalid date of birth');
+      return;
+    }
+
+    // Submit the form (not implemented in this example)
+    // For simplicity, assume the form is successfully submitted.
+
+    // Close the modal after successful form submission
+    closeModal();
   };
 
   return (
-    <div className="modal-app">
+    <div id="root" className="App">
       <button onClick={openModal}>Open Form</button>
-
-      {isOpen && (
-        <div className="modal" ref={modalRef} onClick={closeModal}>
-          <div className="modal-content" onClick={handleModalClick}>
-            <span style={closeIconStyle} onClick={closeModal}>
+      {modalOpen && (
+        <div className="modal" ref={modalRef}>
+          <div className="modal-content">
+            <button className="close" onClick={closeModal}>
               &times;
-            </span>
-            <form onSubmit={handleSubmit} onClick={handleModalContentClick}>
+            </button>
+            <form onSubmit={(e) => e.preventDefault()}>
               <label htmlFor="username">Username:</label>
               <input
                 type="text"
                 id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                required
               />
-
               <label htmlFor="email">Email:</label>
               <input
                 type="text"
                 id="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setEmailError('');
+                }}
               />
-
-              <label htmlFor="phone">Phone Number:</label>
+              <div className="error">{emailError}</div>
+              <label htmlFor="phone">Phone:</label>
               <input
                 type="text"
                 id="phone"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  setPhoneError('');
+                }}
               />
-
+              <div className="error">{phoneError}</div>
               <label htmlFor="dob">Date of Birth:</label>
               <input
-                type="date"
+                type="text"
                 id="dob"
                 value={dob}
-                onChange={(e) => setDob(e.target.value)}
-                required
+                onChange={(e) => {
+                  setDob(e.target.value);
+                  setDobError('');
+                }}
               />
-
-              <button type="submit" className="submit-button">
+              <div className="error">{dobError}</div>
+              <button
+                className="submit-button"
+                onClick={handleSubmit}
+                type="button"
+              >
                 Submit
               </button>
             </form>
@@ -124,4 +127,4 @@ const ModalApp = () => {
   );
 };
 
-export default ModalApp;
+export default App;
