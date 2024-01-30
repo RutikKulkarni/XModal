@@ -1,23 +1,39 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 
-const App = () => {
-  const [modalOpen, setModalOpen] = useState(false);
+const ModalApp = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [dob, setDob] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [phoneError, setPhoneError] = useState('');
-  const [dobError, setDobError] = useState('');
   const modalRef = useRef(null);
 
   const openModal = () => {
-    setModalOpen(true);
+    setIsOpen(true);
   };
 
   const closeModal = () => {
-    setModalOpen(false);
+    setIsOpen(false);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!email.includes('@')) {
+      alert('Invalid email. Please check your email address.');
+    } else if (phone.length !== 10 || !/^\d+$/.test(phone)) {
+      alert('Invalid phone number. Please enter a 10-digit phone number.');
+    } else if (new Date(dob) > new Date()) {
+      alert('Invalid date of birth. Please enter a valid date.');
+    } else {
+      alert('Form submitted successfully!');
+      setUsername('');
+      setEmail('');
+      setPhone('');
+      setDob('');
+      closeModal();
+    }
   };
 
   const handleOutsideClick = (e) => {
@@ -34,89 +50,75 @@ const App = () => {
     };
   }, []);
 
-  const handleSubmit = () => {
-    // Validate email
-    if (!/^\S+@\S+\.\S+$/.test(email)) {
-      setEmailError('Invalid email');
-      return;
-    }
+  const closeIconStyle = {
+    cursor: 'pointer',
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    fontSize: '24px',
+    backgroundColor: '#4f4f4f',
+    color: '#fff',
+    borderRadius: '50%',
+    padding: '5px',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  };
 
-    // Validate phone number
-    if (!/^\d{10}$/.test(phone)) {
-      setPhoneError('Invalid phone number');
-      return;
-    }
+  const handleModalClick = (e) => {
+    e.stopPropagation();
+  };
 
-    // Validate date of birth
-    const currentDate = new Date();
-    const selectedDate = new Date(dob);
-    if (selectedDate >= currentDate) {
-      setDobError('Invalid date of birth');
-      return;
-    }
-
-    // Submit the form (not implemented in this example)
-    // For simplicity, assume the form is successfully submitted.
-
-    // Close the modal after successful form submission
-    closeModal();
+  const handleModalContentClick = (e) => {
+    e.stopPropagation();
   };
 
   return (
-    <div id="root" className="App">
+    <div className="modal-app">
       <button onClick={openModal}>Open Form</button>
-      {modalOpen && (
-        <div className="modal" ref={modalRef}>
-          <div className="modal-content">
-            <button className="close" onClick={closeModal}>
+
+      {isOpen && (
+        <div className="modal" ref={modalRef} onClick={closeModal}>
+          <div className="modal-content" onClick={handleModalClick}>
+            <span style={closeIconStyle} onClick={closeModal}>
               &times;
-            </button>
-            <form onSubmit={(e) => e.preventDefault()}>
+            </span>
+            <form onSubmit={handleSubmit} onClick={handleModalContentClick}>
               <label htmlFor="username">Username:</label>
               <input
                 type="text"
                 id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                required
               />
+
               <label htmlFor="email">Email:</label>
               <input
                 type="text"
                 id="email"
                 value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setEmailError('');
-                }}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
-              <div className="error">{emailError}</div>
-              <label htmlFor="phone">Phone:</label>
+
+              <label htmlFor="phone">Phone Number:</label>
               <input
                 type="text"
                 id="phone"
                 value={phone}
-                onChange={(e) => {
-                  setPhone(e.target.value);
-                  setPhoneError('');
-                }}
+                onChange={(e) => setPhone(e.target.value)}
+                required
               />
-              <div className="error">{phoneError}</div>
+
               <label htmlFor="dob">Date of Birth:</label>
               <input
-                type="text"
+                type="date"
                 id="dob"
                 value={dob}
-                onChange={(e) => {
-                  setDob(e.target.value);
-                  setDobError('');
-                }}
+                onChange={(e) => setDob(e.target.value)}
+                required
               />
-              <div className="error">{dobError}</div>
-              <button
-                className="submit-button"
-                onClick={handleSubmit}
-                type="button"
-              >
+
+              <button type="submit" className="submit-button">
                 Submit
               </button>
             </form>
@@ -127,4 +129,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default ModalApp;
