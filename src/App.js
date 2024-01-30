@@ -69,7 +69,7 @@ const App = () => {
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (isModalOpen && e.target.id === 'root') {
+      if (isModalOpen && !e.target.closest('.modal-content')) {
         closeModal();
       }
     };
