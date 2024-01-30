@@ -1,12 +1,27 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, { useState, useRef, useEffect } from "react";
+import "./App.css";
 
 const ModalApp = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [dob, setDob] = useState('');
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [dob, setDob] = useState("");
+  const modalRef = useRef(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        closeModal();
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
   const openModal = () => {
     setIsOpen(true);
@@ -19,28 +34,28 @@ const ModalApp = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!email.includes('@')) {
-      alert('Invalid email. Please check your email address.');
+    if (!email.includes("@")) {
+      alert("Invalid email. Please check your email address.");
     } else if (phone.length !== 10 || !/^\d+$/.test(phone)) {
-      alert('Invalid phone number. Please enter a 10-digit phone number.');
+      alert("Invalid phone number. Please enter a 10-digit phone number.");
     } else if (new Date(dob) > new Date()) {
-      alert('Invalid date of birth. Please enter a valid date.');
+      alert("Invalid date of birth. Please enter a valid date.");
     } else {
-      alert('Form submitted successfully!');
-      setUsername('');
-      setEmail('');
-      setPhone('');
-      setDob('');
+      alert("Form submitted successfully!");
+      setUsername("");
+      setEmail("");
+      setPhone("");
+      setDob("");
       closeModal();
     }
   };
 
   const closeIconStyle = {
-    cursor: 'pointer',
-    position: 'absolute',
-    top: '10px',
-    right: '10px',
-    fontSize: '18px',
+    cursor: "pointer",
+    position: "absolute",
+    top: "10px",
+    right: "10px",
+    fontSize: "18px",
   };
 
   const handleModalClick = (e) => {
@@ -56,7 +71,7 @@ const ModalApp = () => {
       <button onClick={openModal}>Open Form</button>
 
       {isOpen && (
-        <div className="modal" onClick={closeModal}>
+        <div className="modal" ref={modalRef} onClick={closeModal}>
           <div className="modal-content" onClick={handleModalClick}>
             <span style={closeIconStyle} onClick={closeModal}>
               &times;
