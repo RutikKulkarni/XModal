@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './App.css'; // Import your CSS file for styling
+import './App.css';
 
 const ModalApp = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,15 +19,14 @@ const ModalApp = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Data validation
     if (!email.includes('@')) {
       alert('Invalid email. Please check your email address.');
     } else if (phone.length !== 10 || !/^\d+$/.test(phone)) {
       alert('Invalid phone number. Please enter a 10-digit phone number.');
+    } else if (new Date(dob) > new Date()) {
+      alert('Invalid date of birth. Please enter a valid date.');
     } else {
-      // Submit logic here
       alert('Form submitted successfully!');
-      // Reset form and close modal
       setUsername('');
       setEmail('');
       setPhone('');
@@ -36,14 +35,33 @@ const ModalApp = () => {
     }
   };
 
+  const closeIconStyle = {
+    cursor: 'pointer',
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    fontSize: '18px',
+  };
+
+  const handleModalClick = (e) => {
+    e.stopPropagation();
+  };
+
+  const handleModalContentClick = (e) => {
+    e.stopPropagation();
+  };
+
   return (
     <div className="modal-app">
       <button onClick={openModal}>Open Form</button>
 
       {isOpen && (
         <div className="modal" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <form onSubmit={handleSubmit}>
+          <div className="modal-content" onClick={handleModalClick}>
+            <span style={closeIconStyle} onClick={closeModal}>
+              &times;
+            </span>
+            <form onSubmit={handleSubmit} onClick={handleModalContentClick}>
               <label htmlFor="username">Username:</label>
               <input
                 type="text"
