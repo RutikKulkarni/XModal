@@ -86,33 +86,35 @@ const App = () => {
       <h1>User Details Model</h1>
       <button onClick={openModal}>Open Form</button>
 
-      {isModalOpen && (
-        <div className="modal" id="root">
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <form>
-              <h3>Fill Details</h3>
-              <label htmlFor="username">Username:</label>
-              <input type="text" id="username" onChange={handleInputChange} />
+      <div id="root">
+        {isModalOpen && (
+          <div className="modal">
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <form>
+                <h3>Fill Details</h3>
+                <label htmlFor="username">Username:</label>
+                <input type="text" id="username" onChange={handleInputChange} />
 
-              <label htmlFor="email">Email:</label>
-              <input type="text" id="email" onChange={handleInputChange} />
-              <span className="validation-message">{validationMessages.email}</span>
+                <label htmlFor="email">Email:</label>
+                <input type="text" id="email" onChange={handleInputChange} />
+                <span className="validation-message">{validationMessages.email}</span>
 
-              <label htmlFor="phone">Phone:</label>
-              <input type="text" id="phone" onChange={handleInputChange} />
-              <span className="validation-message">{validationMessages.phone}</span>
+                <label htmlFor="phone">Phone:</label>
+                <input type="text" id="phone" onChange={handleInputChange} />
+                <span className="validation-message">{validationMessages.phone}</span>
 
-              <label htmlFor="dob">Date of Birth:</label>
-              <input type="date" id="dob" onChange={handleInputChange} />
-              <span className="validation-message">{validationMessages.dob}</span>
+                <label htmlFor="dob">Date of Birth:</label>
+                <input type="date" id="dob" onChange={handleInputChange} />
+                <span className="validation-message">{validationMessages.dob}</span>
 
-              <button type="button" className="submit-button" onClick={handleSubmit}>
-                Submit
-              </button>
-            </form>
+                <button type="button" className="submit-button" onClick={handleSubmit}>
+                  Submit
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
